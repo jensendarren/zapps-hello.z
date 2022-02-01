@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "target": "hello.z",
+  "target": "jensendarren.z",
   "keyvalue": {},
   "contracts": [
     "Hello"
