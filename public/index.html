@@ -4,7 +4,7 @@
     <!-- Use the script below to load pointSDKDemo.js if the Point SDK browser extention is not available
     The pointSDKDemo.js makes calls to the Node ZProxy and can be used to assist development of Node APIs
     Comment out the script tag below that loads pointSDKDemo.js if you want to test using the PointSDK extention-->
-    <script type="text/javascript" src="pointSDKDemo.js"></script>
+    <!-- <script type="text/javascript" src="pointSDKDemo.js"></script> -->
     <style>
       html {
         background-color: black;
@@ -18,12 +18,12 @@
   </head>
   <body>
     <div>
-      <h1>Hello World Example (jensendarren repo from ~/.point/src)</h1>
+      <h1>Hello World Example (WebSockets Disabled)</h1>
       <h2>Demo Storage Layer features and the Point Browser SDK</h2>
 
       <h4 style="color: pink">Using Point SDK Version: <span id="pointSDKVersion"></span></h4>
 
-      <table>
+      <!-- <table>
         <tr>
           <td>Test <b>HelloWorld</b> Event</td>
           <td>Test <b>UpdatedValue</b> Event</td>
@@ -36,7 +36,7 @@
           <td><button id="btnEmitHelloWorld" onclick="emitHelloWorld()">Emit</button><input type="text" id="txtHelloWorld" value="Tiger" ></input></td>
           <td><button id="btnEmitUpdatedValue" onclick="emitUpdatedValue()">Emit</button><input type="text" id="txtUpdatedValue" value="Durian" ></input></td>
         </tr>
-      </table>
+      </table> -->
       <br />
       <a href="#">Click Here to Test Notifications Extention (check README in 'hello.z/extension')</a>
       <br />
@@ -52,8 +52,21 @@
       <img id='storageImg'/>
       <br />
       <br />
-      <b>WebSocket Events</b>
-      <ul id="wsevents"></ul>
+      <div>
+        <b>Try updating the value in contract!</b>
+      </div>
+      <br />
+      <div>
+        <input id="valueInput" type="text" name="valueInput" placeholder="Enter some text" />
+      </div>
+      <br />
+      <button id="btnStorageValueUpdate" onclick="updateStorageValue()">Update Value</button>
+      <p id="valueText"></p>
+      <br />
+      <br />
+      <br />
+      <!-- <b>WebSocket Events</b>
+      <ul id="wsevents"></ul> -->
       <b>API Responses</b>
       <p id="results"></p>
     </div>
@@ -79,7 +92,9 @@
         // initialize websocket connect to point network node via PointSDK
         // the idea here is to initalize websockets for the app only if needed
         // and to specify the callback that will handle the incomming websocket messages
-        if(window.point.websocket) {
+        const RUN_WS_TEST = false; // run web sockets test block below?
+
+        if(RUN_WS_TEST && window.point.websocket) {
           socket = window.point.websocket.open(websocketMessageHandler);
           socket.onopen = function() { console.log('WebSocket Client Connected'); }
         }
@@ -245,6 +260,15 @@
         let value = document.getElementById('txtHelloWorld').value;
         await window.point.contract.send({contract: 'Hello', method: 'emitHelloWorldEvent', params: [value]});
         document.getElementById('btnEmitHelloWorld').innerText = 'Emit';
+      }
+
+      async function updateStorageValue() {
+        const input = document.getElementById('valueInput');
+        const display = document.getElementById('valueText');
+        display.innerHTML = `<p>Storing...</p>`;
+        await window.point.contract.send({contract:'Hello',method:'setValue',params:[input.value]});
+        display.innerHTML = `<p>Stored value: ${input.value}</p>`;
+        input.value = null;
       }
     </script>
   </body>
